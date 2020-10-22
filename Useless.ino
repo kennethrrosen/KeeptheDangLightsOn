@@ -1,5 +1,5 @@
 /*
-  KEEP THE DAMN LIGHTS ON
+  KEEP THE DANG LIGHTS ON
   by: Questionable Mechanics
   contact: questionable.mechanics@gmail.com
   last rev: 10/2020
