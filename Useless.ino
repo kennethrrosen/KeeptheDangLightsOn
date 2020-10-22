@@ -181,8 +181,6 @@ void setup()
 
 }
 
-/* Begin running LCD status section*/
-
 void loop()
 {
   static bool hasRun = false;
@@ -250,8 +248,6 @@ void printTime(int character, int line, tmElements_t tm)
     lcd.print(tm.Minute);
   }
 }
-
-/* Begin date element */
 
 void printDate(int character, int line, tmElements_t tm)
 {
