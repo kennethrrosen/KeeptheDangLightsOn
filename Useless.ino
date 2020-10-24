@@ -7,10 +7,6 @@
 
   Note: Developed and tested using Arduino IDE ver 1.8.42.0
 
-  Developmental notes:
-      Need to add external power to servos.
-      Need to add external reset pin.
-
 */
 
 #include <Wire.h>
@@ -25,13 +21,13 @@ Servo servoRight;
 Bounce debouncer = Bounce();
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
-const int servoLeftPin = 11; 
-const int servoRightPin = 10; 
+const int servoLeftPin = 6; //11
+const int servoRightPin = 5; //10
 const int switchPin = 2; 
 const int DS1307 = 0x68;
 
 int state = 0;
-
+/*
 byte verticalLine[8] = {
   B00100,
   B00100,
@@ -82,7 +78,7 @@ byte char4[8] = {
   0b00000,
   0b00000
 };
-
+*/
 byte DownArrow[8] = {
   B00100,
   B00100,
@@ -126,7 +122,7 @@ byte Skull[8] = {
   B00000,
   B00000
 };
-
+/*
 void printFrame()
 {
   lcd.setCursor(1, 0);
@@ -150,14 +146,14 @@ void printFrame()
   lcd.setCursor(19, 3);
   lcd.write(byte(4));
 }
-
+*/
 void createCustomCharacters()
 {
-  lcd.createChar(0, verticalLine);
-  lcd.createChar(1, char1);
-  lcd.createChar(2, char2);
-  lcd.createChar(3, char3);
-  lcd.createChar(4, char4);
+  //lcd.createChar(0, verticalLine);
+  //lcd.createChar(1, char1);
+  //lcd.createChar(2, char2);
+  //lcd.createChar(3, char3);
+  //lcd.createChar(4, char4);
   lcd.createChar(5, UpArrow);
   lcd.createChar(6, DownArrow);
   //lcd.createChar(20, Skull);
@@ -188,7 +184,7 @@ void loop()
 
   tmElements_t tm;
   debouncer.update();
-  printFrame();
+  //printFrame();
   (RTC.read(tm));
 
   printSwitchState(1, 1);
@@ -202,7 +198,7 @@ void loop()
 
   if ((hasRun == false) && (outtageQty < 11))
   {
-    if (digitalRead(switchPin) == LOW) {
+    if (digitalRead(switchPin) == HIGH) { //LOW
       lcd.setCursor(1, 2);
       lcd.print("Power Loss!");
       delay(500);
@@ -214,17 +210,24 @@ void loop()
       delay(500);
       hasRun == true;
       outtageQty++;
-      delay(500);
     }
     while (outtageQty >= 11) {
       servoLeft.write(90);
       servoRight.write(90);
       lcd.setCursor(1, 2);
+      lcd.clear(); //BEGIN NEW LINE OF CLEARING THE HANGING EXCLAIMATION POINT
+      printSwitchState(1, 1);
+      lcd.setCursor(7, 1);
+      lcd.print("Out:");
+      lcd.print(outtageQty);
+      printDate(14, 1, tm);
+      printTime(14, 2, tm);
+      lcd.setCursor(1, 2); //END NEW LINE OF CLEARING THE HANGING EXCLAIMATION POINT
       lcd.print("Please Reset");
       delay(1500);
     }
   }
-  if (digitalRead(switchPin) == HIGH) {
+  if (digitalRead(switchPin) == LOW) { //HIGH
     lcd.setCursor(1, 2);
     lcd.print("Monitoring");
     servoLeft.write(90);
@@ -235,7 +238,7 @@ void loop()
 
 void printTime(int character, int line, tmElements_t tm)
 {
-  String seconds, minutes;
+  String minutes;
   lcd.setCursor(character, line);
   lcd.print(tm.Hour);
   lcd.print(":");
@@ -262,7 +265,7 @@ void printSwitchState(int character, int line)
   lcd.setCursor(character, line);
   lcd.print("SW:");
   digitalRead(switchPin);
-  if (digitalRead(switchPin) == HIGH) {
+  if (digitalRead(switchPin) == LOW) {
     lcd.write(byte(5));
   } else
   { lcd.write(byte(6));
